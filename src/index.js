@@ -1,1 +1,2 @@
-import './React/react-entry';
+import './React/react-entry'
+import './reset.css'

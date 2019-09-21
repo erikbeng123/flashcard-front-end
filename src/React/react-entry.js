@@ -1,14 +1,19 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 
-const HelloMessage = ({ name }) => {
-  return <div>{name}</div>;
-};
+import Study from './pages/Study/Study'
+import data from '../data/data_new.json'
+import { createDeck } from '../state/deck'
 
-HelloMessage.propTypes = {
-  name: PropTypes.string.isRequired,
-};
+const App = () => {
+  const [duck, updateDeck] = useState(null)
+  const [_, forceUpdate] = useState(false)
+  useEffect(() => {
+    const created = createDeck(data, updateDeck)
+    updateDeck(created)
+  }, [])
+  return duck && <Study deck={duck} />
+}
 
-const mountNode = document.getElementById('app');
-ReactDOM.render(<HelloMessage name="Test" />, mountNode);
+const mountNode = document.getElementById('app')
+ReactDOM.render(<App />, mountNode)
