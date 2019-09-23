@@ -3,30 +3,22 @@ import React, { useState, useEffect } from 'react'
 import Card from '../../components/Card/Card'
 import styles from './studyStyles.css'
 
+let time = null
+
 const Study = ({ deck }) => {
   const [curIndex, setCurIndex] = useState(0)
   const [topXVal, setTopXVal] = useState(0)
-  let time = null
-  const topCard = deck.cards[curIndex]
-  const bottomCard = deck.cards[curIndex + 1]
-  const nextCard = () => {
-    if (time) {
-      return
-    }
-    setTopXVal(100)
+  const topCard = deck.cards.length > 0 ? deck.cards[curIndex] : null
+  const bottomCard = deck.cards.length > 1 ? deck.cards[curIndex + 1] : null
+  const nextCard = xVal => {
+    if (time) return
+    setTopXVal(xVal)
     time = setTimeout(() => {
-      setCurIndex(previous => Math.min(previous + 1, deck.cards.length))
-      setTopXVal(0)
-      time = null
-    }, 1000)
-  }
-
-  const previousCard = () => {
-    if (time) {
-      return
-    }
-    setTopXVal(-100)
-    time = setTimeout(() => {
+      if (xVal < 0) {
+        topCard.updateRecallScore(false, 0)
+      } else {
+        topCard.updateRecallScore(true, 0)
+      }
       setCurIndex(previous => Math.min(previous + 1, deck.cards.length))
       setTopXVal(0)
       time = null
@@ -34,23 +26,32 @@ const Study = ({ deck }) => {
   }
 
   useEffect(() => {
-    document.addEventListener('keydown', e => {
-      if (e.keyCode === 39) {
-        nextCard()
-      } else if (e.keyCode === 37) {
-        previousCard()
+    const goToNextCard = e => {
+      if (topCard) {
+        if (e.keyCode === 39) {
+          nextCard(100)
+        } else if (e.keyCode === 37) {
+          nextCard(-100)
+        }
       }
-    })
-  }, [])
+    }
+    document.addEventListener('keydown', goToNextCard)
+    return () => document.removeEventListener('keydown', goToNextCard)
+  })
 
-  return (
+  return curIndex !== deck.cards.length ? (
     <div>
-      <div className={styles.deck}>
-        <Card data={bottomCard} />
-        <Card data={topCard} xPos={topXVal} />
+      <div>
+        <span>{deck.stats.getCardsCleared()}</span>
+        <span>{deck.stats.getDeckSize()}</span>
       </div>
-      <button onClick={nextCard}>Next</button>
+      <div className={styles.deck}>
+        {bottomCard && <Card data={bottomCard} />}
+        {topCard && <Card data={topCard} xPos={topXVal} />}
+      </div>
     </div>
+  ) : (
+    <button onClick={() => setCurIndex(0)}>Reset</button>
   )
 }
 

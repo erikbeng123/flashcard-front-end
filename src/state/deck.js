@@ -30,8 +30,8 @@ const createDeck = (data, updateFn) => {
         preparedUpdateFn()
       },
       updateRecallScore: (recallSucessful, ellapsedTime) => {
-        scoreDelta = calculateScore(recallSucessful, ellapsedTime)
-        const newScore = recallSucessful + scoreDelta
+        const scoreDelta = calculateScore(recallSucessful, ellapsedTime)
+        const newScore = recallScore + scoreDelta
         if (recallScore < 100 && newScore >= 100) {
           cardsCleared += 1
         } else if (recallScore >= 100 && newScore < 100) {

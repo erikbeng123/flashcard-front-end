@@ -1,26 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import styles from './CardStyles.css'
-
-const handleKeyPress = () => {}
 
 const Card = ({ data, xPos }) => {
   const { definition, kanji, kana } = data
   const isFlipped = data.getIsFlipped()
 
+  const translateX = -50 + xPos * 2.5
+  const translateY = xPos !== 0 ? -46 : -50
+  const scale = xPos !== 0 ? 1.05 : 1
   const rotateZ = xPos === 0 ? 0 : 2 * Math.sign(xPos)
+  const transition = xPos !== 0 ? '1s' : '0s'
 
   return (
     <div
       className={styles.card}
       onClick={data.flip}
-      onKeyPress={handleKeyPress}
       role="presentation"
       style={{
-        transform: `translateX(${-50 + xPos * 2.5}%) translateY(${
-          xPos !== 0 ? -46 : -50
-        }%) scale(${xPos !== 0 ? 1.05 : 1}) rotateZ(${rotateZ}deg)`,
-        transition: xPos !== 0 ? '1s' : '0s',
+        transition,
+        transform: `translateX(${translateX}%) translateY(${translateY}%) scale(${scale}) rotateZ(${rotateZ}deg)`,
       }}
     >
       <div className={`${styles.side} ${!isFlipped ? styles.visible : ''}`}>
